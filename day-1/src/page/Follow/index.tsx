@@ -17,7 +17,7 @@ export default function FollowPage() {
   } else {
     dispatch(userFetched(data.user))
   }
-  
+
 
   if(!user) {
     window.location.href = '/login'
@@ -37,12 +37,12 @@ export default function FollowPage() {
           <TabPanels p={10} >
             <TabPanel display={'grid'} gap={5}>
               {data.user.followers.map((item: any) => (
-                  <DataSuggest key={item.id} item={item} user={user}  />
+                  <DataSuggest key={item.id} item={item} user={data.user}  />
               ))}
             </TabPanel>
             <TabPanel display={'grid'} gap={5}>
             {data.user.following.map((item: any) => (
-                <DataSuggest key={item.id} item={item} user={user}  />
+                <DataSuggest key={item.id} item={item} user={data.user}  />
             ))}
             </TabPanel>
           </TabPanels>

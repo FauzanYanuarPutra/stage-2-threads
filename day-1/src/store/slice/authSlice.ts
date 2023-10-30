@@ -34,14 +34,6 @@ const authSlice = createSlice({
     login: (state) => {
       state.isLoggedIn = true;
     },
-    // follow: (state, action) => { ... }
-    // check: (_, action) => {
-    //   const payload = action.payload;
-    //   const user = {
-    //     id: payload.id,
-    //   };
-    //   return user;
-    // },
     logout: (state) => {
       state.isLoggedIn = false;
     },
