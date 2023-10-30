@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "author_picture": "https://source.unsplash.com/random/500x500",
+    "author_name": "Fauzan",
+    "author_username": "fauzanyanuarp",
+    "author_badge": "https://static.productionready.io/images/badges/ready-badge.svg",
+    "posted_at": "4h",
+    "content": "Postingan ini dari fauzan",
+    "image": "https://source.unsplash.com/random/1000x1000",
+    "likes_count": 29,
+    "replies_count": 30,
+    "is_liked": true
+  },
+  {
+    "id": 2,
+    "author_picture": "https://source.unsplash.com/random/300x300",
+    "author_name": "Cyrus",
+    "author_username": "cyrus",
+    "author_badge": "https://static.productionready.io/images/badges/ready-badge.svg",
+    "posted_at": "4h",
+    "content": "Postingan ini dari cyrus",
+    "image": "https://source.unsplash.com/random/500x1000",
+    "likes_count": 1013,
+    "replies_count": 34,
+    "is_liked": false
+  },
+  {
+    "id": 3,
+    "author_picture": "https://source.unsplash.com/random/300x300",
+    "author_name": "Alex",
+    "author_username": "alexbasudara",
+    "author_badge": "https://static.productionready.io/images/badges/ready-badge.svg",
+    "posted_at": "4h",
+    "content": "Postingan ini dari alex",
+    "image": "https://source.unsplash.com/random/1000x500",
+    "likes_count": 123124,
+    "replies_count": 123,
+    "is_liked": false
+  }
+]
