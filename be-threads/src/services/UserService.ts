@@ -19,9 +19,10 @@ export default new class UserService {
       const checkEmail = await this.UserRepository.findOne({
         where: {
           email: req.body.email
-        }})
+        }
+      })
 
-      if(checkEmail) return res.status(400).json({ message: "Email already exists" })
+      if (checkEmail) return res.status(400).json({ message: "Email already exists" })
 
       const passwordHash = await bcrypt.hash(password, 10)
 
@@ -29,9 +30,9 @@ export default new class UserService {
 
 
 
-    const data =  await this.UserRepository.save(user)
+      const data = await this.UserRepository.save(user)
 
-    const users = await this.UserRepository.findOne({
+      const users = await this.UserRepository.findOne({
         where: {
           id: data.id
         },
@@ -130,7 +131,7 @@ export default new class UserService {
 
   async create(req: Request, res: Response): Promise<Response> {
     try {
-      const {  id, username, full_name, email, password, profile_picture, profile_description } = req.body
+      const { id, username, full_name, email, password, profile_picture, profile_description } = req.body
 
       const user = this.UserRepository.create({ id, username, full_name, email, password, profile_picture, profile_description })
       await this.UserRepository.save(user)
@@ -172,8 +173,8 @@ export default new class UserService {
     try {
       const user = await this.UserRepository.findOne({
         where: {
-          id: Number(req.body.id_following)
-        }, 
+          id: Number(req.body.id_following),
+        },
         relations: ['following', 'followers']
       })
 
@@ -181,7 +182,7 @@ export default new class UserService {
 
       await this.UserRepository.save(user);
 
-      return res.status(200).json({ data: "berhasil" ,user })
+      return res.status(200).json({ data: "berhasil", user })
     } catch (error) {
       console.log(error)
     }
@@ -213,7 +214,7 @@ export default new class UserService {
       },
       relations: ['your_like', 'following', 'followers']
     });
-    if(!user) throw new Error('user not found')
+    if (!user) throw new Error('user not found')
 
     return user
   }
@@ -242,91 +243,16 @@ export default new class UserService {
     }
   }
 
-  private async addOrRemoveFollow(Data: User , partyId: number, action: boolean) {
+  private async addOrRemoveFollow(Data: User, partyId: number, action: boolean) {
 
     const user = await this.findOneById(partyId)
-    if (action === true) {
-      Data.following.push(user)
-    } else {
+
+    if(Data.following.some((following: any) => following.id === partyId)) {
       Data.following = Data.following.filter((party: any) => party.id !== partyId)
+    } else {
+      Data.following.push(user)
     }
 
     return await this.UserRepository.save(Data);
   }
-
-  
-
-  // private async addOrRemoveFollow(user_id: string | number, partyId: number, action: boolean) {
-  //   const data = await this.findOneById(user_id);
-
-  //   console.log(data)
-
-  //   if (data) {
-  //     if (action == true) {
-  //       const existingData = data.following.find((party) => party.id === partyId);
-
-  //       console.log(existingData)
-  //       if(!existingData) {
-  //         const partyToAdd = await this.findOneById(partyId);
-  //         data.following.push(partyToAdd);
-  //         const dataku = await this.UserRepository.save(data);
-  //         console.log(dataku)
-  //       }
-  //     } else if(action == false) {
-  //       data.following = data.following.filter((party) => party.id !== partyId);
-  //       const dataku = await this.UserRepository.save(data);
-  //       console.log(dataku)
-  //     }
-  //   }
-
-    // if (data) {
-    //   if (action === true) {
-    //     const existingParty = data.following.find((party) => party.id === partyId);
-
-    //     if (!existingParty) {
-    //       const partyToAdd = await this.findOneById(partyId);
-    //       data.following.push(partyToAdd);
-    //       await this.UserRepository.save(data);
-    //     }
-    //   } else if (action === false) {
-    //     data.following = data.following.filter((party) => party.id !== partyId);
-    //     await this.UserRepository.save(data);
-    //   }
-  
-    //   return data.following;
-    // } else {
-    //   throw new Error('User not found');
-    // }
-  }
-  
-
-  
-// }
-
-
-
-// simpanan 
-
-  // private async addOrRemoveLike(user_id: string | number, liked: (number | string)[]) {
-  //   const paslon = await this.findOneById(user_id);
-  
-  //   const partiesToAdd = liked.filter((partyId) =>
-  //     paslon.your_like.every((party) => party.id !== partyId)
-  //   );
-  
-  //   const partiesToRemove = paslon.your_like.filter(
-  //     (party) => !liked.includes(party.id)
-  //   );
-  
-  //   const partiesToAddEntities = await Promise.all(
-  //     partiesToAdd.map((partyId) =>
-  //       this.ThreadRepository.findOne({ where: { id: Number(partyId) } })
-  //     )
-  //   );
-  
-  //   paslon.your_like = [...paslon.your_like, ...partiesToAddEntities].filter(
-  //     (party) => !partiesToRemove.includes(party)
-  //   );
-
-  //   return paslon.your_like; 
-  // }
+}
