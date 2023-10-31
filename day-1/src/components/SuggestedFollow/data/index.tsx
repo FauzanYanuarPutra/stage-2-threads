@@ -1,14 +1,11 @@
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {  allUserFetch, userFetched } from "../../../store/slice/authSlice";
-import { getUser } from "../../../services/apiService";
+import {   userFetched } from "../../../store/slice/authSlice";
 
 
 export default function DataSuggest({ item, user }: any) {
 
-  const [isFollow, setFollow] = useState<boolean | undefined>(false);
   const dispatch = useDispatch()
 
   const follow = user.following.some((items: any) => {
@@ -22,7 +19,6 @@ export default function DataSuggest({ item, user }: any) {
       action: isFollow,
     })
       .then(async (res) => {
-        setFollow(isFollow);
         dispatch(userFetched(res.data.user))
       })
       .catch((error) => {

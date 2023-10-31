@@ -4,13 +4,17 @@ import { BiLogOut } from "react-icons/bi";
 import { FaHome } from "react-icons/fa";
 import { LiaUserSolid } from "react-icons/lia";
 import { TbUserSearch } from "react-icons/tb";
+import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
+import { logout } from "../../store/slice/authSlice";
 
 export default function Navbar() {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
+    dispatch(logout())
     localStorage.removeItem('token');
     navigate('/login');
   }

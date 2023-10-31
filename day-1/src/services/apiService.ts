@@ -8,9 +8,9 @@ export async function getThread() {
 }
 
 
-export async function getThreadDetail() {
+export async function getThreadDetail(id: string | number) {
   
-  const res = await fetch("http://localhost:5000/api/v1/threads");
+  const res = await fetch(`http://localhost:5000/api/v1/thread/${id}`);
 
   if (!res.ok) throw Error("Failed getting hero");
 
@@ -39,6 +39,7 @@ export async function allUser() {
   if (!res.ok) throw Error("Failed getting hero");
 
   const data = await res.json();
+
   return data;
 }
 

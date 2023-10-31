@@ -1,8 +1,4 @@
-// authSlice.js
-
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { useDispatch } from "react-redux";
 
 const initialState = {
   isLoggedIn: false,
@@ -10,6 +6,7 @@ const initialState = {
   allUser: [],
   value: 0,
   threads: [],
+  detailThreads: {},
 };
 
 const authSlice = createSlice({
@@ -28,6 +25,9 @@ const authSlice = createSlice({
     threadsFetched: (state, action) => {
       state.threads = action.payload;
     },
+    detailFetched: (state, action) => {
+      state.detailThreads = action.payload;
+    },
     allUserFetch: (state, action) => {
       state.allUser = action.payload;
     },
@@ -36,6 +36,7 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.isLoggedIn = false;
+      state.user = {}
     },
   },
 });
@@ -50,5 +51,6 @@ export const {
   decremented,
   userFetched,
   threadsFetched,
+  detailFetched
 } = authSlice.actions;
 export default authSlice.reducer;

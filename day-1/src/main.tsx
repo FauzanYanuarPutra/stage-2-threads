@@ -14,6 +14,8 @@ import { Provider } from 'react-redux';
 import LoginPage from './page/Auth/Login/index.tsx';
 import RegisterPage, { publicData } from './page/Auth/Register/index.tsx';
 import FollowPage from './page/Follow/index.tsx';
+import SearchPage from './page/search/index.tsx';
+import { PrivateRoute, PublicRoute } from './root/PrivateRoute.tsx';
 
 const theme = extendBaseTheme({
   styles: {
@@ -35,30 +37,80 @@ const store = configureStore({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <PrivateRoute />, 
     loader: privateData,
+    children: [
+      {
+        index: true,
+        element: <App />,
+        loader: privateData,
+      },
+    ],
   },
   {
     path: "replies/:id",
-    element: <Replies />,
+    element: <PrivateRoute />, 
     loader: privateData,
+    children: [
+      {
+        index: true,
+        element: <Replies />,
+        loader: privateData,
+      },
+    ],
   },
+  
   {
     path: "login",
-    element: <LoginPage />,
+    element: <PublicRoute />, 
     loader: publicData,
+    children: [
+      {
+        index: true,
+        element: <LoginPage />,
+        loader: publicData,
+      },
+    ],
   },
   {
     path: "register",
-    element: <RegisterPage />,
+    element: <PublicRoute />, 
     loader: publicData,
+    children: [
+      {
+        index: true,
+        element: <RegisterPage />,
+        loader: privateData,
+      },
+    ],
   },
   {
     path: "follows",
-    element: <FollowPage />,
+    element: <PrivateRoute />, 
     loader: privateData,
+    children: [
+      {
+        index: true,
+        element: <FollowPage />,
+        loader: privateData,
+      },
+    ],
+  },
+  {
+    path: "search",
+    element: <PrivateRoute />, 
+    loader: privateData,
+    children: [
+      {
+        index: true,
+        element: <SearchPage />,
+        loader: privateData,
+      },
+    ],
   }
 ]);
+
+
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -70,4 +122,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ChakraProvider>
   </React.StrictMode>,
 )
+
 

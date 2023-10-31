@@ -2,11 +2,10 @@ import { Box, Button, Flex, Image, Text } from "@chakra-ui/react"
 import { AiFillInstagram, AiFillLinkedin } from "react-icons/ai"
 import { FaCircle, FaFacebook, FaGithub } from "react-icons/fa"
 import SuggestedFollow from "../SuggestedFollow"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { useLoaderData } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
 import { userFetched } from "../../store/slice/authSlice"
-import { useEffect } from "react"
 
 export const MyProfile = () => {
   const { user }: any = useLoaderData();
@@ -17,12 +16,7 @@ export const MyProfile = () => {
     dispatch(userFetched(user))
   } else {
     dispatch(userFetched(data.user))
-
   }
-
-
-  // console.log(data.user)
-
 
   return (
     <Box position={'sticky'} h={'100vh'} display={'flex'} flexDirection={'column'} top={0} left={0} bottom={0} p={4} px={5} gap={3}>
@@ -35,15 +29,15 @@ export const MyProfile = () => {
         </Box>
         <Text fontSize={'xl'} fontWeight={'bold'}>{data.user.full_name}</Text>
         <Box fontSize={'xs'}>
-          <Text color={"#797979"}>@{ data.user.username }</Text>
+          <Text color={"#797979"}>@{  data.user.username }</Text>
           <Text>picked over by the community</Text>
           <Flex gap={2}>
             <Flex gap={1}>
-              <Text>{data.user.following.length}</Text>
+              <Text>{data.user.following && data.user.following.length}</Text>
               <Text color={'#797979'}>Following</Text>
             </Flex>
             <Flex gap={1}>
-              <Text>{data.user.followers.length}</Text>
+              <Text>{data.user.following && data.user.followers.length}</Text>
               <Text color={'#797979'}>Followers</Text>
             </Flex>
           </Flex>
@@ -66,3 +60,4 @@ export const MyProfile = () => {
     </Box>
   )
 }
+

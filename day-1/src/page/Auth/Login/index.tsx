@@ -1,10 +1,14 @@
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import axios from "axios";
 import {  useState } from "react";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getUser } from "../../../services/apiService";
+import { useDispatch } from "react-redux";
+import { userFetched } from "../../../store/slice/authSlice";
 
 function LoginPage() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [user, setUser] = useState({
     email: '',
     password: ''
@@ -12,12 +16,8 @@ function LoginPage() {
   const [error, setError] = useState({
     message: ''
   })
-  const { token }: any = useLoaderData();
 
-  if(token.message !== 'Unauthorized') {
-    window.location.href = '/'
-    return
-  }
+
 
   const handleLogin = () => {
     axios.post('http://localhost:5000/api/v1/auth/login', user).then((res) => {
@@ -29,6 +29,7 @@ function LoginPage() {
         })
       }
       navigate('/')
+      dispatch(userFetched(getUser(res.data.user.id)))
     }).catch((err) => {
       setError({
         message: err.response.data.message

@@ -44,7 +44,7 @@ export default function Thread(props: Thread) {
     id,
     content,
     image,
-    user,
+    user: props.user,
     like,
     replies, 
   });
@@ -70,8 +70,6 @@ export default function Thread(props: Thread) {
     }
   };
 
-
-
   const handleLike = (id: number | undefined, user_id: number | undefined, isLiked: boolean | undefined) => {
     axios.post(`http://localhost:5000/api/v1/like/${user_id}`, {
       like: id,
@@ -83,19 +81,19 @@ export default function Thread(props: Thread) {
       })
       .catch((error) => {
         console.error(error);
-      });
+      })
   };
 
   return (
     <Flex px={7} key={id} gap={4} borderBottom=".02px solid #343434" py={10}>
       <Box backgroundColor="gray.200" minW={50} minH={50} w={50} h={50} borderRadius="full">
-        <Image src={user?.profile_picture} alt="" w="full" h="full" borderRadius="full" />
+        <Image src={thread.user?.profile_picture} alt="" w="full" h="full" borderRadius="full" />
       </Box>
       <Flex direction="column" gap={2}>
         <Flex gap={1} alignItems="center">
-          <Text fontSize="sm">{user?.full_name}</Text>
+          <Text fontSize="sm">{thread.user?.full_name}</Text>
           <Text fontSize="sm" color="#595959">
-            @{user?.username}
+            @{thread.user?.username}
           </Text>
           <FaCircle fill="#595959" size={5} />
           <Text fontSize="sm" color="#595959">

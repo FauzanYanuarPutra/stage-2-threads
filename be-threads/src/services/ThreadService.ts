@@ -21,6 +21,14 @@ export default new class ThreadService {
     }
   }
 
+  async findByID(id: number){
+    try {
+      const thread = await this.ThreadsRepository.findOneBy({ id })
+      return thread
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async findOne(req: Request, res: Response): Promise<Response> {
     try {
@@ -42,6 +50,7 @@ export default new class ThreadService {
       const image = req.file.path
 
       const user = await UserService.finById(userID)
+
       const thread = this.ThreadsRepository.create({ content, image, user })
       await this.ThreadsRepository.save(thread)
       return res.status(200).json(thread)

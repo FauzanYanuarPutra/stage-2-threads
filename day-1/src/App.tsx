@@ -1,66 +1,41 @@
-import { Button, Flex, Grid, Image,  InputRightElement, InputGroup, Text, Box, Textarea } from '@chakra-ui/react';
+import { Button, Flex, Grid, Image,  InputRightElement, InputGroup, Text, Box, Textarea, Spinner } from '@chakra-ui/react';
 import {RiImageAddFill} from 'react-icons/ri'
 import Thread from './features/threads';
 import Layout from './layouts';
-import { defer, useLoaderData } from 'react-router-dom';
-import { allUser, checkToken, getThread, getUser } from './services/apiService';
-import {  useRef, useState } from 'react';
+import {  defer, useLoaderData,  } from 'react-router-dom';
+import { allUser, checkToken, getThread, getThreadDetail, getUser } from './services/apiService';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AiFillCloseCircle } from 'react-icons/ai';
+import { AiFillCloseCircle, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { incremented } from './store/slice/authSlice';
 
-
-// interface Reply {
-//   id: number;
-//   author_picture: string;
-//   author_name: string;
-//   author_username: string;
-//   author_badge: string;
-//   posted_at: string;
-//   content: string;
-//   image: string;
-//   likes_count: number;
-//   replies_count: number;
-//   is_liked: boolean;
-// }
-
-
-// eslint-disable-next-line react-refresh/only-export-components
-// export async function loader() {
-//   const hero = await getThread();
-
-//   return hero;
-// }
-
-export const privateData = async () => {
+export const privateData: any = async ({ params }: { params: { id: string | null | number| any } }) => {
+  const id = params.id | 0
   const thread = await getThread();
   const dataUser = await allUser();
   const token = await checkToken();
+
+  let detailThread: any = null
+  if (id !== 0) {
+    detailThread = await getThreadDetail(id);
+  }
+  
   let user: any = null;
 
   if (token && token.user) {
     user = await getUser(token.user.id);
   }
 
-  // const AllUser = dataUser.filter((id: any, index: any) => index < 5 && id.id !== user?.id);
-
-  return defer({ thread, user, dataUser, token });
+    return defer({ thread, user, dataUser, token, detailThread });
 };
 
 function App() {
-  // const hero = useLoaderData() as Reply[];
-  const { thread, user, token }: any = useLoaderData();
+  const { thread, user }: any = useLoaderData();
   const [threadData, setThread] = useState(thread);
   const [modal, setModal] = useState(false)
-
-
-  if(token.message === 'Unauthorized' && !user) {
-    window.location.href = '/login'
-    return
-  }
+  const [loading, setLoading] = useState(false)
 
   const [createThread, setCreateThread] = useState({
     content: '',
@@ -78,8 +53,6 @@ function App() {
     }
   };
 
-  // const use = useSelector((state: any) => state.auth);
-
   const dispatch = useDispatch()
 
 
@@ -93,10 +66,9 @@ function App() {
     setCreateThread({ ...createThread, image: imageFile });
   };
   
-  
-
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true)
   
     const formData = new FormData();
     formData.append("content", createThread.content);
@@ -110,8 +82,11 @@ function App() {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
+      }).finally(() => {
+          setLoading(true)
       });
       setModal(false);
+      
       pollData();
     } catch (error) {
       console.error(error);
@@ -171,7 +146,25 @@ function App() {
                         onChange={(e) => handleImageUpload(e)}
                       />
                     </Box>
-                    <Button type='submit' borderRadius={'full'} bg={'#005F0E'} fontWeight={'semibold'} fontSize={'md'} px={7}  py={'3px'} >Post</Button>
+                    <Button
+                        type='submit'
+                        borderRadius={'full'}
+                        fontWeight={'semibold'}
+                        fontSize={'md'}
+                        px={7}
+                        py={'3px'}
+                        isDisabled={loading}
+                        cursor={loading ? 'not-allowed' : 'pointer'}
+                        bg={loading ? 'gray.400' : '#005F0E'}
+                      >
+                        {loading ? (
+                          <Spinner w={'20px'} h={'20px'}>
+                            <AiOutlineLoading3Quarters />
+                          </Spinner>
+                        ) : (
+                          'Post'
+                        )}
+                      </Button>
                     </Flex>
                   </Box>
               </form>

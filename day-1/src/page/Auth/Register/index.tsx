@@ -1,8 +1,10 @@
-import { Link, defer, useLoaderData, useNavigate } from "react-router-dom";
+import { Link, defer,  useNavigate } from "react-router-dom";
 import { checkToken, getThread, getUser } from "../../../services/apiService";
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { userFetched } from "../../../store/slice/authSlice";
 
 export const publicData = async () => {
   const thread = await getThread();
@@ -14,6 +16,10 @@ export const publicData = async () => {
     user = await getUser(token.user.id);
   }
 
+  if (token && token.user && user) {
+    window.location.href = '/'
+  }
+
 
   return defer({ thread, user, token });
 };
@@ -21,23 +27,21 @@ export const publicData = async () => {
 
 function RegisterPage() {
   const navigate = useNavigate()
-  const { token, user }: any = useLoaderData();
+  const dispatch = useDispatch()
   const [userData, setUser] = useState({
     username: '',
     email: '',
     password: ''
   })
 
-  if(token.message !== 'Unauthorized' && user) {
-    window.location.href = '/'
-    return
-  }
+
   
   const handleRegister = (e: any) => {
     e.preventDefault()
     axios.post('http://localhost:5000/api/v1/auth/register', userData).then((res) => {
       localStorage.setItem('token', res.data.token)
       navigate('/')
+      dispatch(userFetched(getUser(res.data.user.id)))
     })
   }
 

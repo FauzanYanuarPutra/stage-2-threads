@@ -10,7 +10,14 @@ export default new class ThreadService {
   async find(req: Request, res: Response): Promise<Response> {
     try {
       const threads = await this.RepliesRepository.find({
-        relations: ['user', 'thread']
+        relations: ['user', 'thread', 'thread.replies'],
+        order: {
+          thread: {
+            replies: {
+              id: 'ASC'
+            }
+          }
+        }
       })
       return res.status(200).json(threads)
     } catch (error) {
@@ -20,7 +27,13 @@ export default new class ThreadService {
 
   async findOne(req: Request, res: Response): Promise<Response> {
     try {
-      const thread = await this.RepliesRepository.findOneBy({ id: Number(req.params.id) })
+      const thread = await this.RepliesRepository.findOne({
+        where: {
+          id: Number(req.params.id)
+        },
+        relations: ['user', 'thread', 'thread.replies'],
+        
+      })
       return res.status(200).json(thread)
     } catch (error) {
       console.log(error)
@@ -35,7 +48,21 @@ export default new class ThreadService {
 
       const replies = this.RepliesRepository.create({ content, image, user, thread })
       await this.RepliesRepository.save(replies)
-      return res.status(200).json(replies)
+
+      const data = await this.RepliesRepository.findOne({
+        where: {
+          id: replies.id
+        },
+        relations: ['user', 'thread', 'thread.replies', 'thread.replies.user'],
+        order: {
+          thread: {
+            replies: {
+              id: 'ASC'
+            }
+          }
+        }
+      })
+      return res.status(200).json(data)
     } catch (error) {
       console.log(error)
     }
