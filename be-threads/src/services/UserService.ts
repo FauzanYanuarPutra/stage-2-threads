@@ -5,6 +5,7 @@ import { Request, Response } from "express"
 import { Threads } from "../entity/Thread"
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
+import cloudinary from "../config/cloudinary"
 
 
 export default new class UserService {
@@ -143,20 +144,32 @@ export default new class UserService {
 
   async update(req: Request, res: Response): Promise<Response> {
     try {
-      const { username, full_name, email, password, profile_picture, profile_description } = req.body
-      const user = await this.UserRepository.findOneBy({ id: Number(req.params.id) })
-      user.username = username
-      user.full_name = full_name
-      user.email = email
-      user.password = password
-      user.profile_picture = profile_picture
-      user.profile_description = profile_description
-      await this.UserRepository.save(user)
-      return res.status(200).json('user updated')
+      const { username, full_name, email, password, profile_description } = req.body;
+  
+      const user = await this.UserRepository.findOneBy({ id: Number(req.params.id) });
+  
+      if (req.file) {
+        cloudinary.upload();
+        const imageLink = await cloudinary.destination(req.file.filename);
+        user.profile_picture = imageLink;
+      }
+  
+      user.username = username;
+      user.full_name = full_name;
+      user.email = email;
+      user.password = password;
+      user.profile_description = profile_description;
+  
+      await this.UserRepository.save(user);
+
+      const result = await this.UserRepository.findOneBy({ id: Number(req.params.id) });
+  
+      return res.status(200).json(result);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
+  
 
   async delete(req: Request, res: Response): Promise<Response> {
     try {

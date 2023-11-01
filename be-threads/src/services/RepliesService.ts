@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source"
 import { Request, Response } from "express"
 import UserService from "./UserService"
 import { Replies } from "../entity/Replies"
+import cloudinary from "../config/cloudinary"
 
 export default new class ThreadService {
   private readonly RepliesRepository: Repository<Replies> = AppDataSource.getRepository(Replies)
@@ -43,10 +44,10 @@ export default new class ThreadService {
   async create(req: Request, res: Response): Promise<Response> {
     try {
       const { content,  user, thread } = req.body
-      const image = req.file.path
+      cloudinary.upload();
+      const imageLink = await cloudinary.destination(req.file.filename);
 
-
-      const replies = this.RepliesRepository.create({ content, image, user, thread })
+      const replies = this.RepliesRepository.create({ content, image: imageLink, user, thread })
       await this.RepliesRepository.save(replies)
 
       const data = await this.RepliesRepository.findOne({

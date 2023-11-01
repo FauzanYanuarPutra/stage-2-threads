@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import ThreadService from "../services/ThreadService"
+import ThreadQueue from "../queue/ThreadQueue"
 
 export default new class ThreadController {
   async find(req: Request, res: Response) {
@@ -11,7 +12,7 @@ export default new class ThreadController {
   }
 
   async create(req: Request, res: Response) {
-    return await ThreadService.create(req, res)
+    return await ThreadQueue.create(req, res)
   }
 
   async update(req: Request, res: Response) {

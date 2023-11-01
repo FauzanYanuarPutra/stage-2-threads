@@ -16,6 +16,7 @@ import RegisterPage, { publicData } from './page/Auth/Register/index.tsx';
 import FollowPage from './page/Follow/index.tsx';
 import SearchPage from './page/search/index.tsx';
 import { PrivateRoute, PublicRoute } from './root/PrivateRoute.tsx';
+import ProfilePage from './page/profile/index.tsx';
 
 const theme = extendBaseTheme({
   styles: {
@@ -92,6 +93,18 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <FollowPage />,
+        loader: privateData,
+      },
+    ],
+  },
+  {
+    path: "profile",
+    element: <PrivateRoute />, 
+    loader: privateData,
+    children: [
+      {
+        index: true,
+        element: <ProfilePage />,
         loader: privateData,
       },
     ],

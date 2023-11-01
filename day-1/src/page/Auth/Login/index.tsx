@@ -17,12 +17,9 @@ function LoginPage() {
     message: ''
   })
 
-
-
   const handleLogin = () => {
     axios.post('http://localhost:5000/api/v1/auth/login', user).then((res) => {
       localStorage.setItem('token', res.data.token)
-      console.log(res.status)
       if (res.status === 401) {
         setError({
           message: res.data.message

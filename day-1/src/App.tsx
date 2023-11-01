@@ -9,7 +9,8 @@ import { motion } from 'framer-motion';
 import { AiFillCloseCircle, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { incremented } from './store/slice/authSlice';
+import { incremented, threadsFetched } from './store/slice/authSlice';
+import { useSelector } from 'react-redux';
 
 export const privateData: any = async ({ params }: { params: { id: string | null | number| any } }) => {
   const id = params.id | 0
@@ -33,27 +34,24 @@ export const privateData: any = async ({ params }: { params: { id: string | null
 
 function App() {
   const { thread, user }: any = useLoaderData();
-  const [threadData, setThread] = useState(thread);
   const [modal, setModal] = useState(false)
   const [loading, setLoading] = useState(false)
+  const data = useSelector((state: any) => state.auth);
+
+  const dispatch = useDispatch()
+
+  if (data.threads.length <= 0) {
+    dispatch(threadsFetched(thread));
+  } else {
+    dispatch(threadsFetched(data.threads));
+  }
+
 
   const [createThread, setCreateThread] = useState({
     content: '',
     image: null,
     userID: user.id,
   })
-
-  const pollData = async () => {
-    try {
-      const newThread = await getThread();
-
-      setThread(newThread);
-    } catch (error) {
-      console.error('Error polling data:', error);
-    }
-  };
-
-  const dispatch = useDispatch()
 
 
   const HandleModal = () => {
@@ -65,6 +63,18 @@ function App() {
     const imageFile = e.target.files[0];
     setCreateThread({ ...createThread, image: imageFile });
   };
+
+  const fetchData = () => {
+    axios.get('http://localhost:5000/api/v1/threads', {
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      }
+    }).then((res) => {
+      dispatch(threadsFetched(res.data));
+    })
+  }
+
+  
   
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
@@ -78,16 +88,21 @@ function App() {
     formData.append("userID", user.id);
   
     try {
+      setLoading(false)
       await axios.post('http://localhost:5000/api/v1/thread', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
       }).finally(() => {
-          setLoading(true)
+        setTimeout(() => {
+          fetchData()
+          setLoading(false)
+        }, 3500)
       });
       setModal(false);
       
-      pollData();
+
     } catch (error) {
       console.error(error);
     }
@@ -111,7 +126,7 @@ function App() {
             </InputGroup>
           </Flex>
           <Grid gap={4} position={'relative'}>
-            {threadData && threadData.map((item: any) => (
+            {data.threads && data.threads.map((item: any) => (
               <Thread key={item.id}  {...item} />
             ))}
             {modal && (

@@ -48,7 +48,6 @@ function Replies() {
   const datas = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
 
-
   if (datas.detailThreads.id === undefined) {
     dispatch(detailFetched(detailThread));
   } else {

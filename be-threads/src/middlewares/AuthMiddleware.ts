@@ -19,8 +19,6 @@ const AuthMiddware = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: "Unauthorized" })
   }
 
-
-
 }
 
 export default AuthMiddware
