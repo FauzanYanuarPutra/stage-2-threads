@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { detailFetched } from '../../store/slice/authSlice';
 import { useDispatch } from 'react-redux';
 import { TbDisabled } from 'react-icons/tb';
+import useToast from '../../hooks/useToast';
 
 export interface User {
   id: number;
@@ -43,6 +44,7 @@ function Replies() {
   const params: any = useParams();
   const { user, detailThread }: any = useLoaderData();
   const [loading, setLoading] = useState(false);
+  const toast = useToast()
 
 
   const datas = useSelector((state: any) => state.auth);
@@ -92,8 +94,9 @@ function Replies() {
           'Content-Type': 'multipart/form-data'
         }
       }).then((res) => {
-        console.log(res.data.thread)
-          dispatch(detailFetched(res.data.thread));
+        dispatch(detailFetched(res.data.thread));
+        toast("Success", "Reply Created", "success");
+        
       }).catch((error) => {
         console.log(error)
       }).finally(() => {
@@ -125,9 +128,9 @@ function Replies() {
               <Text w={'full'} fontSize={'xl'} color={'gray'}>
               What is happening?!
               </Text>
-              <InputRightElement gap={2}>
+              <InputRightElement gap={2} w={'auto'}>
                 <RiImageAddFill fill={'#04A51E'} size={20} />
-                <Button borderRadius={'full'} bg={'#005F0E'} px={5} py={'.5px'}>Post</Button>
+                <Button borderRadius={'full'} bg={'#005F0E'} px={5} py={'.5px'} color={'white'}>Post</Button>
               </InputRightElement>
             </InputGroup>
       </Flex>
@@ -147,7 +150,7 @@ function Replies() {
         >
           <form action="" onSubmit={(e) => handleFormSubmit(e)}>
             <Box bg={'#262626'} color={'white'} borderRadius={'10px'} p={4} m={10} position={'relative'}>
-              <Button position={'absolute'} top={5} right={5}>
+              <Button position={'absolute'} top={5} right={5} color={'white'} bg={'transparent'} _hover={{ bg: 'transparent', color: 'red' }}>
                 <AiFillCloseCircle onClick={() => HandleModal()} size={'30px'}></AiFillCloseCircle>
               </Button>
                 <Flex alignItems={'center'} gap={2} fontSize={'2xl'}  fontWeight={'bold'} p={7} h={'150px'} w={'100%'}>
@@ -176,6 +179,7 @@ function Replies() {
                   fontSize={'md'}
                   px={7}
                   py={'3px'}
+                  color={'white'}
                   isDisabled={loading}
                   cursor={loading ? 'not-allowed' : 'pointer'}
                   bg={loading ? 'gray.400' : '#005F0E'}

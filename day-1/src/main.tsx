@@ -18,19 +18,6 @@ import SearchPage from './page/search/index.tsx';
 import { PrivateRoute, PublicRoute } from './root/PrivateRoute.tsx';
 import ProfilePage from './page/profile/index.tsx';
 
-const theme = extendBaseTheme({
-  styles: {
-    global: {
-      body: {
-        bg: 'darkBackground',
-        color: 'white',
-      },
-    },
-  },
-  colors: {
-    darkBackground: '#1D1D1D'
-  }
-})
 const store = configureStore({
   reducer: RootReducer
 })
@@ -123,12 +110,29 @@ const router = createBrowserRouter([
   }
 ]);
 
+const toastOptions: any = {
+  defaultOptions: {
+    position: 'top-right',
+    duration: 3000,
+    isClosable: true,
+    variant: "solid",
+    bg: "teal.500",
+    color: "white",
+    fontSize: "sm",
+    innerHeight: 40, 
+    innerWidth: 40,
+  },
+};
+
+
+
 
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode >
-    <ChakraProvider theme={theme}>
+    <ChakraProvider 
+      toastOptions={toastOptions}>
       <Provider store={store}>  
         <RouterProvider router={router}  />
       </Provider>

@@ -18,6 +18,7 @@ export default function SuggestedFollow() {
     dispatch(allUserFetch(data.allUser))
   }
 
+
   return (
     <Box backgroundColor={'#262626'} color={'white'} borderRadius={'10px'} p={4} my={1}>
       <Text fontWeight={'bold'} fontSize={'md'}>Suggested for you</Text>

@@ -24,9 +24,6 @@ export default function SearchPage() {
     (item.full_name && item.full_name.toLowerCase().includes(search.toLowerCase()))
   );
 
-
-
-
   return (
     <>
       <Layout>

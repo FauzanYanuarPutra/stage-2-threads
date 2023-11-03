@@ -6,11 +6,53 @@ import { Threads } from "../entity/Thread"
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import cloudinary from "../config/cloudinary"
+import { Redis } from "ioredis"
 
+const redis = new Redis();
 
 export default new class UserService {
   private readonly UserRepository: Repository<User> = AppDataSource.getRepository(User)
   private readonly ThreadRepository: Repository<Threads> = AppDataSource.getRepository(Threads)
+
+
+  
+  async getUserByIdFromCache(userId: number) {
+    const cachedUser = await redis.get(`user:${userId}`);
+    if (cachedUser) {
+      return JSON.parse(cachedUser);
+    } else {
+      const user = await this.UserRepository.findOne({
+        where: { id: userId },
+        relations: ['your_like', 'following', 'followers'],
+      });
+
+      if (user) {
+        redis.set(`user:${userId}`, JSON.stringify(user));
+      }
+
+      return user;
+    }
+  }
+
+  async findOne(req: Request, res: Response): Promise<Response> {
+    try {
+      const userId = Number(req.params.id);
+
+      const user = await this.getUserByIdFromCache(userId);
+
+      if (user) {
+        return res.status(200).json(user);
+      }
+  
+      if (user) {
+        redis.set(`user:${userId}`, JSON.stringify(user));
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 
   async register(req: Request, res: Response): Promise<Response> {
@@ -28,8 +70,6 @@ export default new class UserService {
       const passwordHash = await bcrypt.hash(password, 10)
 
       const user = this.UserRepository.create({ username, full_name, email, password: passwordHash, profile_picture, profile_description })
-
-
 
       const data = await this.UserRepository.save(user)
 
@@ -99,6 +139,7 @@ export default new class UserService {
   async finById(id: any) {
     try {
       const user = await this.UserRepository.findOneBy({ id: Number(id) })
+      
       console.log(user)
       return user
     } catch (error) {
@@ -116,19 +157,19 @@ export default new class UserService {
     }
   }
 
-  async findOne(req: Request, res: Response): Promise<Response> {
-    try {
-      const user = await this.UserRepository.findOne({
-        where: {
-          id: Number(req.params.id)
-        },
-        relations: ['your_like', 'following', 'followers']
-      })
-      return res.status(200).json(user)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // async findOne(req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const user = await this.UserRepository.findOne({
+  //       where: {
+  //         id: Number(req.params.id)
+  //       },
+  //       relations: ['your_like', 'following', 'followers']
+  //     })
+  //     return res.status(200).json(user)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   async create(req: Request, res: Response): Promise<Response> {
     try {

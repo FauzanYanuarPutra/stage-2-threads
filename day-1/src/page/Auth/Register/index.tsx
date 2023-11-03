@@ -5,6 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { userFetched } from "../../../store/slice/authSlice";
+import useToast from "../../../hooks/useToast";
 
 export const publicData = async () => {
   const thread = await getThread();
@@ -28,6 +29,8 @@ export const publicData = async () => {
 function RegisterPage() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const toast = useToast()
+
   const [userData, setUser] = useState({
     username: '',
     email: '',
@@ -42,6 +45,8 @@ function RegisterPage() {
       localStorage.setItem('token', res.data.token)
       navigate('/')
       dispatch(userFetched(getUser(res.data.user.id)))
+      toast("Success", "Register Success", "success");
+
     })
   }
 

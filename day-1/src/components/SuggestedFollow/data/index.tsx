@@ -35,7 +35,7 @@ export default function DataSuggest({ item, user }: any) {
             <Text fontSize={'11px'} color={'#797979'}>@{item.username}</Text>
           </Box>
       </Flex>
-      <Button border={!follow ? '1px solid white' : '1px solid #797979'} fontSize={'11px'} color={!follow ? 'white' : '#797979'} px={3} py={'1.5px'} borderRadius={'full'} onClick={() => handleLike(item.id, user.id, !follow )}>{ !follow ? 'Follow' : 'unfollow' }</Button>
+      <Button border={!follow ? '1px solid white' : '1px solid #797979'} fontSize={'11px'} color={!follow ? 'white' : '#797979'} h={'25px'} bg={'transparent'} borderRadius={'full'} onClick={() => handleLike(item.id, user.id, !follow )}>{ !follow ? 'Follow' : 'unfollow' }</Button>
     </Flex>
   )
 }
